@@ -60,55 +60,62 @@ namespace TestProject
 
         private void btnTransfer_Click(object sender, EventArgs e)
         {
-            string txtaccno = txtAccNo.Text;
-            int amount = Convert.ToInt32(txtAmount.Text);
-            var checkAccNo = db.Accounts.FirstOrDefault(o => o.AccNo == txtaccno);
-            if (checkAccNo != null)
+            try
             {
-                if (amount < Accounts.balance && amount > 0)
+                string txtaccno = txtAccNo.Text;
+                int amount = Convert.ToInt32(txtAmount.Text);
+                var checkAccNo = db.Accounts.FirstOrDefault(o => o.AccNo == txtaccno);
+                if (checkAccNo != null)
                 {
-                    // Chèn dữ liệu vào trấnction
-                    Transaction trans = new Transaction();
-                    trans.Type = "TRANSFER_MONEY";
-                    trans.Amount = amount;
-                    trans.aFrom = Accounts.AccNo;
-                    trans.bTo = txtaccno;
-                    trans.Date = DateTime.Now.ToString().Split(' ')[0];
-                    trans.Time = DateTime.Now.ToString().Split(' ')[1];
-                    trans.MachineID = Machine.MachineID;
-                    db.Transactions.InsertOnSubmit(trans);
-                    
-                    // Xử lý đối phương nhận được tiền
-                    checkAccNo.Balance += amount;
-                    // Xử lý mình giảm tiền
-                    Accounts.balance -= amount;
-                    var thisAccount = db.Accounts.FirstOrDefault(o =>o.AccNo == Accounts.AccNo);
-                    thisAccount.Balance = Accounts.balance;
-                     db.SubmitChanges();
-                    //Xử lý khi giao dịch xong 
-                    DialogResult result = MessageBox.Show("Giao dịch thành công!, Bạn có muốn tiếp tục không?", "Thông tin", MessageBoxButtons.YesNo,MessageBoxIcon.Information);
-                    if (result == DialogResult.No)
+                    if (amount < Accounts.balance && amount > 0)
                     {
-                        new Dashboard().Show();
-                        this.Hide();
+                        // Chèn dữ liệu vào trấnction
+                        Transaction trans = new Transaction();
+                        trans.Type = "TRANSFER_MONEY";
+                        trans.Amount = amount;
+                        trans.aFrom = Accounts.AccNo;
+                        trans.bTo = txtaccno;
+                        trans.Date = DateTime.Now.ToString().Split(' ')[0];
+                        trans.Time = DateTime.Now.ToString().Split(' ')[1];
+                        trans.MachineID = Machine.MachineID;
+                        db.Transactions.InsertOnSubmit(trans);
+
+                        // Xử lý đối phương nhận được tiền
+                        checkAccNo.Balance += amount;
+                        // Xử lý mình giảm tiền
+                        Accounts.balance -= amount;
+                        var thisAccount = db.Accounts.FirstOrDefault(o => o.AccNo == Accounts.AccNo);
+                        thisAccount.Balance = Accounts.balance;
+                        db.SubmitChanges();
+                        //Xử lý khi giao dịch xong 
+                        DialogResult result = MessageBox.Show("Giao dịch thành công!, Bạn có muốn tiếp tục không?", "Thông tin", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                        if (result == DialogResult.No)
+                        {
+                            new Dashboard().Show();
+                            this.Hide();
+                        }
+                        else
+                        {
+                            txtAccNo.Text = "";
+                            txtAmount.Text = "";
+                            Trans t = new Trans();
+                            t.Show();
+                            this.Hide();
+                        }
                     }
                     else
                     {
-                        txtAccNo.Text = "";
-                        txtAmount.Text = "";
-                        Trans t = new Trans();
-                        t.Show();
-                        this.Hide();
+                        MessageBox.Show("Số dư tài khoản của bạn không đủ!", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Số dư tài khoản của bạn không đủ!", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Không tồn tại số tài khoản này!", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else
-            {
-                MessageBox.Show("Không tồn tại số tài khoản này!", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            catch (Exception ex) {
+                MessageBox.Show("Giá trị nhập vào không hợp lệ", "Thông báo lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
         }
     }

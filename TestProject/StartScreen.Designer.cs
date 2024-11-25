@@ -51,6 +51,7 @@
             this.txtMachineNo.Name = "txtMachineNo";
             this.txtMachineNo.Size = new System.Drawing.Size(467, 56);
             this.txtMachineNo.TabIndex = 2;
+            this.txtMachineNo.TextChanged += new System.EventHandler(this.txtMachineNo_TextChanged);
             // 
             // label2
             // 
@@ -61,6 +62,7 @@
             this.label2.Size = new System.Drawing.Size(287, 51);
             this.label2.TabIndex = 5;
             this.label2.Text = "Nhập số máy:";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -71,6 +73,7 @@
             this.label1.Size = new System.Drawing.Size(427, 73);
             this.label1.TabIndex = 3;
             this.label1.Text = "ATM Machine";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // StartScreen
             // 
